@@ -1,4 +1,6 @@
 const Block = require("./block");
+const {DIFFICULTY , MINE_RATE}= require ( '../config');
+
 
 describe('Block Test', ()=>{ 
     let data, lastBlock, block;
@@ -19,5 +21,18 @@ describe('Block Test', ()=>{
         expect( block.lastHash).toEqual ( lastBlock.hash );
     }
     );
+
+    it("Block Hash meet DIFFICULTY" , () => {
+        expect( block.hash.substring(0, block.difficulty )).toEqual ( '0'.repeat( block.difficulty));
+    });
+
+    it("Block adjustDiffculty lower", () => {
+        expect ( Block.adjustDifficulty( block, block.timestamp + MINE_RATE *2 )).toEqual ( block.difficulty - 1);
+    });
+
+    it("Block adjustDiffculty Higher", () => {
+        expect ( Block.adjustDifficulty( block, block.timestamp + MINE_RATE * 0.5 ) ).toEqual ( block.difficulty + 1);
+    });
+
 } ) ;
 

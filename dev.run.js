@@ -1,4 +1,5 @@
-const Block = require("./block");
+const Block = require("./blockchain/block");
+const {DIFFICULTY , MINE_RATE}= require ( './config');
 
 const timestamp ='foo-date';
 const data =  ['blockchain', 'value'];
@@ -9,6 +10,8 @@ console.log('A test Block');
 const block = new Block( 
      timestamp,
     data,
+    0,
+    DIFFICULTY,
     hash,
     lastHash
 );
@@ -19,7 +22,9 @@ console.log('Gensiss Block');
 const testBlock =   new Block( 
     'Gensis Time',
     ['Block','Test'],
-    'fir433-has0334', 
+    0,
+    DIFFICULTY,    
+    'fir433-has0334',
     '0-------9' 
 );
 
@@ -30,4 +35,5 @@ console.log ( Block.gensis().toString() );
 
 console.log('Mine a Block');
 
-console.log( Block.mine( [ 'New' ], Block.gensis() ));
+for ( let i =0; i< 100; i++)
+console.log( Block.mine( [ 'New', i ], Block.gensis() ).toString() );

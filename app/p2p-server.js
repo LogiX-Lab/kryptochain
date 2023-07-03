@@ -45,16 +45,23 @@ class P2PServer {
         socket.send( JSON.stringify( this.blockchain.chain ))
     }
     syncChains () {
+        // Re-try
+        this.connectToPeers();
+
         this.sockets.forEach( socket => {
             this.sendChain ( socket );
         })
     }
     connectToPeers () {
         peers.forEach ( peer => {
-            const socket = new WebSocket(peer);
-            socket.on('open', () => {
-                this.connectSocket ( socket );
-            })
+                const socket = new WebSocket(peer);
+                socket.on('open', () => {
+                    this.connectSocket ( socket );
+                });
+                socket.on('error',()=> {
+                    console.log('Error');
+                })
+
         })
     }
 }

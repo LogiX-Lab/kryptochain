@@ -15,24 +15,24 @@ class BlockChain {
     //inputChina holder of Block[]
     isValidChain( inputChain ) {
         if ( JSON.stringify( inputChain[0]) !== JSON.stringify( Block.gensis() ) ){
-            console.log( 'Block 0:', JSON.stringify( inputChain[0]) );
-            console.log( 'Block 0:', JSON.stringify( Block.gensis()) );
+            //console.log( 'Block 0:', JSON.stringify( inputChain[0]) );
+            //console.log( 'Block 0:', JSON.stringify( Block.gensis()) );
             return false;
         }    
-        console.log( 'Block---:', inputChain.length );
+        //console.log( 'Block---:', inputChain.length );
         for ( let i =1; i< inputChain.length; i++ ) {
             const block = inputChain[i];
             const lastBlock = inputChain[i-1];
-            console.log( 'Block---:', JSON.stringify( block ) );
+            //console.log( 'Block---:', JSON.stringify( block ) );
             if ( block.lastHash !== lastBlock.hash) {
-                console.log( 'lastHash');
+                //console.log( 'lastHash');
                 return false;
             }
             const genHash = Block.hashBlock ( block );
-            console.log( 'genHash',genHash );
-            console.log( 'hash', block.hash );
+            //console.log( 'genHash',genHash );
+            //console.log( 'hash', block.hash );
             if ( block.hash !== genHash ){
-                console.log( 'genHash');
+                //console.log( 'genHash');
                 return false;
             }
 
