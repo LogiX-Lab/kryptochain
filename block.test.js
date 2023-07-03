@@ -1,20 +1,23 @@
 const Block = require("./block");
 
-describe('Block', ()=>{ 
-    const timestamp ='foo-date';
-    const data =  ['blockchain', 'value'];
-    const hash ='foo-hash';
-    const lastHash ='last-hash';
+describe('Block Test', ()=>{ 
+    let data, lastBlock, block;
 
-    const block = new Block( {
-         timestamp,
-        data,
-        hash,
-        lastHash
+    beforeEach( ()=> {
+        data =  ['blockchain', 'value'];
+        lastBlock = Block.gensis();
+        block = Block.mine ( data, lastBlock);
+        console.log( `Before the test, a block mined: ${block}`);
+    
     });
 
-    it('has property..' ,()=>{
-        expect( block.data ).toEqual ( data );
-        expect( block.timestamp).toEqual( timestamp );
+    test('Block data is same..', ()=>{
+        expect( block.data ).toEqual( data );
     });
+
+    it('Block lastHash is same as LastBlock has', () => {
+        expect( block.lastHash).toEqual ( lastBlock.hash );
+    }
+    );
 } ) ;
+
