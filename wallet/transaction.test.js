@@ -28,8 +28,8 @@ describe ( 'Transaction', ()=> {
         let nextAmount, nextRecipient;
 
         beforeEach( () => {
-            nextAmount = 20;
-            nextRecipient ='nxt31328302y';
+            nextAmount = amount;
+            nextRecipient = recipient;
             transaction = transaction.update( wallet, nextRecipient, nextAmount);
             console.log ( transaction );
         });
