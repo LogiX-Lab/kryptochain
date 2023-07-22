@@ -5,10 +5,16 @@ const P2P_PORT = process.env.P2P_PORT || 5001;
 const peers = process.env.PEERS? process.env.PEERS.split(',') :[];
 
 // HTTP_PORT=3003 P2P_PORT=5003 PEERS=ws://localhost:5001,ws://localhost:5002 npm run start
+const MESSAGE_TYPES = {
+    chain: 'CHAIN', 
+    transaction: 'TRANSACTION'
+}
+
 
 class P2PServer {
-    constructor( blockchain ) {
+    constructor( blockchain, transactionPool ) {
         this.blockchain = blockchain;
+        this.transactionPool = transactionPool;
         this.sockets = [];
     
     }
@@ -26,23 +32,40 @@ class P2PServer {
         this.sockets.push( socket );
         console.log('Socket Connected:', socket.url );
 
+        // recv rom peer
         this.messageHander( socket );
 
+        // send to peer
         this.sendChain ( socket );
     }
 
+    // Input to update chain
     messageHander( socket ) {
         socket.on('message', message=> {
-            const data = JSON.parse( message);
-            console.log( `Recv data from ${socket.url} @${P2P_PORT}:`, data);
-
-            this.blockchain.replaceChain( data );
+            const msg = JSON.parse( message);
+            console.log( `Recv message from ${socket.url} @${P2P_PORT}:`, msg);
+            switch ( msg.type ) {
+                case MESSAGE_TYPES.chain:
+                    this.blockchain.replaceChain( msg.payload );
+                    break;
+                case MESSAGE_TYPES.transaction:
+                    this.transactionPool.updateOrAddTransaction( msg.payload );
+                    break;    
+            }
         })
 
     }
 
+    // Sync out the chain
+    //  { type: MESSAGE_TPES.chain, payload: chain }
+    //
+    //
     sendChain ( socket ) {
-        socket.send( JSON.stringify( this.blockchain.chain ))
+        socket.send( JSON.stringify( 
+            {   type: MESSAGE_TYPES.chain,
+                payload: this.blockchain.chain
+            }     
+            ));
     }
     syncChains () {
         // Re-try
@@ -52,6 +75,22 @@ class P2PServer {
             this.sendChain ( socket );
         })
     }
+
+    // Broadcast the Transaction
+    sendTransaction( socket, transaction ) {
+        socket.send( JSON.stringify( 
+            {   type: MESSAGE_TYPES.transaction,
+                payload: transaction
+            }     
+            ));
+    }
+    
+    broadcastTransaction( transaction ) {
+        this.sockets.forEach ( socket => {
+            this.sendTransaction ( socket, transaction )
+        })
+    }
+
     connectToPeers () {
         peers.forEach ( peer => {
                 const socket = new WebSocket(peer);

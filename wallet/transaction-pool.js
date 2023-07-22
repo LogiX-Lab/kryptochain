@@ -9,7 +9,9 @@ class TransactionPool {
         let transactionWithId = this.transactions.find ( t => t.id === transaction.id );
 
         if ( transactionWithId ) {
-            this.transactionPool[ this.transactions.indexOf (transactionWithId)] = transaction;
+
+            console.log(  'Found Tx:=', this.transactions.indexOf (transactionWithId) );
+            this.transactions[ this.transactions.indexOf (transactionWithId) ] = transaction;
         } else {
             this.transactions.push ( transaction );
         }

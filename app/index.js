@@ -5,12 +5,26 @@ const bodyParser = require('body-parser');
 
 const P2PServer = require('./p2p-server');
 
+// Transaction
+const Wallet = require('../wallet');
+const TransactionPool = require('../wallet/transaction-pool');
+
 // HTTP_PORT=3001
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
+// Server
 const app = express();
+// BLock chain
 const bc = new BlockChain();
-const p2pserver = new P2PServer( bc);
+
+//Transaction 
+const wallet = new Wallet();
+const txPool = new TransactionPool();
+
+// P2P communcation
+const p2pserver = new P2PServer( bc, txPool );
+
+
 
 app.use( bodyParser.json());
 
@@ -25,6 +39,26 @@ app.post('/mine', (req, res) =>{
     p2pserver.syncChains();
     
     res.redirect('/blocks');
+})
+
+app.get('/transactions', (req, res) => {
+    res.json( txPool.transactions );
+});
+
+app.post('/transact', ( req, res ) => {
+    const { recipient, amount } = req.body;
+    const transaction = wallet.createTransaction( recipient, amount, txPool );
+
+    p2pserver.broadcastTransaction ( transaction );
+    // res.redirect('/transactions');
+    res.json( transaction );
+
+});
+
+app.get('/public-key', (req, res ) => {
+    res.json ( {
+        publicKey: wallet.publicKey
+    });
 })
 
 app.listen( HTTP_PORT, () => {
