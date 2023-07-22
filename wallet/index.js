@@ -29,15 +29,13 @@ class Wallet {
     }
 
     let transaction = transactionPool.existingTransaction( this.publicKey );
-    if ( transaction ) console.log( `Found:${transaction.input}` );
 
-    console.log( `Found:${transaction}` );
 
     if ( transaction ) {
+      console.log( `Found:${transaction.id}` );
       transaction.update ( this, recipient, amount );
     } else {
       transaction = Transaction.newTransaction( this, recipient, amount );
-
       transactionPool.updateOrAddTransaction( transaction );
 
     }
