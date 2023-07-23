@@ -9,6 +9,8 @@ const P2PServer = require('./p2p-server');
 const Wallet = require('../wallet');
 const TransactionPool = require('../wallet/transaction-pool');
 
+const Miner = require('./miner');
+
 // HTTP_PORT=3001
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
@@ -24,6 +26,9 @@ const txPool = new TransactionPool();
 // P2P communcation
 const p2pserver = new P2PServer( bc, txPool );
 
+const globalChainWallet = Wallet.globalChainWallet();
+
+const miner = new Miner( bc, txPool, wallet, p2pserver, globalChainWallet );
 
 
 app.use( bodyParser.json());
@@ -40,6 +45,15 @@ app.post('/mine', (req, res) =>{
     
     res.redirect('/blocks');
 })
+
+app.get('/mine-transactions', (req, res ) =>  {
+    const block = miner.mine();
+    if ( block ) { 
+        console.log(`---- New block added: ${block.toString()}`);
+    }    
+    res.redirect('/blocks');
+
+});
 
 app.get('/transactions', (req, res) => {
     res.json( txPool.transactions );

@@ -43,6 +43,14 @@ class Wallet {
     return transaction;
 
   }
+
+  static globalChainWallet() {
+    const globalChainWallet = new this();
+    globalChainWallet.address = 'BlockChain-Wallet';
+    globalChainWallet.balance = 0;
+    return globalChainWallet;
+  }
+
 }
 
 module.exports = Wallet;
