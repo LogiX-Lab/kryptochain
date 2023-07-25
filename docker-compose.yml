@@ -1,0 +1,32 @@
+version: "2.1"
+services:
+  kryptochain_srv1:
+    image: kryptochain.img.1
+    container_name: kryptochain_s1
+    environment:
+      - HTTP_PORT=3001
+      - P2P_PORT=5001
+      - PEERS=
+    ports:
+      - 3001:3001
+      - 5001:5001
+  kryptochain_srv2:
+    image: kryptochain.img.1
+    container_name: kryptochain_s2
+    environment:
+      - HTTP_PORT=3002
+      - P2P_PORT=5002
+      - PEERS=ws://kryptochain_srv1:5001
+    ports:
+      - 3002:3002
+      - 5002:5002
+  kryptochain_srv3:
+    image: kryptochain.img.1
+    container_name: kryptochain_s3
+    environment:
+      - HTTP_PORT=3003
+      - P2P_PORT=5003
+      - PEERS=ws://kryptochain_srv1:5001,ws://kryptochain_srv2:5002
+    ports:
+      - 3003:3003
+      - 5003:5003

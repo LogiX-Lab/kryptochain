@@ -44,7 +44,7 @@ class P2PServer {
     messageHander( socket ) {
         socket.on('message', message=> {
             const msg = JSON.parse( message);
-            console.log( `Recv message from ${socket.url} @${P2P_PORT}:`, msg);
+            console.log( `Recv message from ${socket.url} @ this ${P2P_PORT}:`, msg);
             switch ( msg.type ) {
                 case MESSAGE_TYPES.chain:
                     this.blockchain.replaceChain( msg.payload );
@@ -112,12 +112,14 @@ class P2PServer {
 
     connectToPeers () {
         peers.forEach ( peer => {
+                console.log(`Open to ${peer}`);
                 const socket = new WebSocket(peer);
                 socket.on('open', () => {
                     this.connectSocket ( socket );
+                    console.log(`Established Connection ${socket.url}`);
                 });
-                socket.on('error',()=> {
-                    console.log('Error');
+                socket.on('error',( theS, theR )=> {
+                    console.log(`Error in socket ${theR}`);
                 })
 
         })
